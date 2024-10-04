@@ -1,0 +1,8 @@
+# Objectives:
+
+- RAG pipeline with custom chatbot
+- Full text search
+- Full email client clone (syncing email, sending and receiving, composing etc)
+- AI smart compose (email writing copilot)
+- Command K command bar
+- Stripe payment setup (SaaS subscription service)
