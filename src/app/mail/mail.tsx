@@ -11,6 +11,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
+import AccountSwitcher from "./account-switcher";
+import SideBar from "./sidebar";
 
 interface MailProps {
   defaultLayout: number[] | undefined;
@@ -67,10 +69,10 @@ export function Mail({
                 isCollapsed ? "h-[52px]" : "px-2",
               )}
             >
-              {/* <AccountSwitcher isCollapsed={isCollapsed} /> */}
+              <AccountSwitcher isCollapsed={isCollapsed} />
             </div>
             <Separator />
-            {/* <SideBar isCollapsed={isCollapsed} /> */}
+            <SideBar isCollapsed={isCollapsed} />
             <div className="flex-1"></div>
             {/* <AskAI isCollapsed={isCollapsed} /> */}
           </div>
