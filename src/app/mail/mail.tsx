@@ -1,11 +1,16 @@
 "use client";
 
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "~/components/ui/resizable";
-import { Separator } from "~/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { TooltipProvider } from "~/components/ui/tooltip";
-import { cn } from "~/lib/utils";
+import { useLocalStorage } from "usehooks-ts";
 
 interface MailProps {
   defaultLayout: number[] | undefined;
@@ -18,8 +23,7 @@ export function Mail({
   defaultCollapsed = false,
   navCollapsedSize,
 }: MailProps) {
-  // const [done, setDone] = useLocalStorage("normalhuman-done", false);
-  const [done, setDone] = useState(false);
+  const [done, setDone] = useLocalStorage("normalhuman-done", false);
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
 
   return (
