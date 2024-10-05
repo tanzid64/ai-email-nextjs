@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { exchangeCodeForAccessToken, getAccountDetails } from "~/lib/aurinko";
+import { db } from "~/server/db";
 
 export const GET = async (req: NextRequest) => {
   const { userId } = await auth();
@@ -53,4 +54,21 @@ export const GET = async (req: NextRequest) => {
     );
 
     const accountDetails = await getAccountDetails(token.accessToken);
+
+    // Save data to our own database
+    await db.account.upsert({
+      where: { id: token.accountId.toString() },
+      create: {
+        id: token.accountId.toString(),
+        userId,
+        token: token.accessToken,
+        emailAddress: accountDetails.email,
+        name: accountDetails.name,
+      },
+      update: {
+        token: token.accessToken,
+      },
+    });
+
+    return NextResponse.redirect(new URL("/mail", req.url));
 };
