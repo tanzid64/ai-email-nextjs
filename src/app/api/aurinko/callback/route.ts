@@ -1,4 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
+import { waitUntil } from "@vercel/functions";
+import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 import { exchangeCodeForAccessToken, getAccountDetails } from "~/lib/aurinko";
 import { db } from "~/server/db";
@@ -53,22 +55,35 @@ export const GET = async (req: NextRequest) => {
       },
     );
 
-    const accountDetails = await getAccountDetails(token.accessToken);
+  const accountDetails = await getAccountDetails(token.accessToken);
 
-    // Save data to our own database
-    await db.account.upsert({
-      where: { id: token.accountId.toString() },
-      create: {
-        id: token.accountId.toString(),
+  // Save data to our own database
+  await db.account.upsert({
+    where: { id: token.accountId.toString() },
+    create: {
+      id: token.accountId.toString(),
+      userId,
+      token: token.accessToken,
+      emailAddress: accountDetails.email,
+      name: accountDetails.name,
+      provider: "aurinko",
+    },
+    update: {
+      token: token.accessToken,
+    },
+  });
+
+  // trigger initial sync endpoint
+
+  waitUntil(
+    axios
+      .post(`${process.env.NEXT_PUBLIC_URL}/api/initial-sync`, {
+        accountId: token.accountId.toString(),
         userId,
-        token: token.accessToken,
-        emailAddress: accountDetails.email,
-        name: accountDetails.name,
-      },
-      update: {
-        token: token.accessToken,
-      },
-    });
+      })
+      .then((res) => console.log("Initial sync", res.data))
+      .catch((err) => console.error(err)),
+  );
 
-    return NextResponse.redirect(new URL("/mail", req.url));
+  return NextResponse.redirect(new URL("/mail", req.url));
 };
