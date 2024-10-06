@@ -24,7 +24,7 @@ interface NavProps {
 }
 
 export function Nav({ links, isCollapsed }: NavProps) {
-  const [_, setTab] = useLocalStorage("normalhuman-tab", "inbox");
+  const [_, setTab] = useLocalStorage("imail-tab", "inbox");
 
   return (
     <div

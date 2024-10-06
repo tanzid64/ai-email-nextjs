@@ -13,6 +13,7 @@ import { useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import AccountSwitcher from "./account-switcher";
 import SideBar from "./sidebar";
+import ThreadList from "./thread-list";
 
 interface MailProps {
   defaultLayout: number[] | undefined;
@@ -25,7 +26,7 @@ export function Mail({
   defaultCollapsed = false,
   navCollapsedSize,
 }: MailProps) {
-  const [done, setDone] = useLocalStorage("normalhuman-done", false);
+  const [done, setDone] = useLocalStorage("imail-done", false);
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
 
   return (
@@ -110,10 +111,10 @@ export function Mail({
             <Separator />
             {/* <SearchBar /> */}
             <TabsContent value="inbox" className="m-0">
-              {/* <ThreadList /> */}
+              <ThreadList />
             </TabsContent>
             <TabsContent value="done" className="m-0">
-              {/* <ThreadList /> */}
+              <ThreadList />
             </TabsContent>
           </Tabs>
         </ResizablePanel>

@@ -1,11 +1,15 @@
 import { api } from "@/trpc/react";
 import { useLocalStorage } from "usehooks-ts";
+import {atom, useAtom} from 'jotai'
 
-const useThreads = () => {
+export const threadIdAtom = atom<string | null>(null);
+
+export const useThreads = () => {
   const { data: accounts } = api.account.getAccounts.useQuery();
   const [accountId] = useLocalStorage("accountId", "");
   const [tab] = useLocalStorage("imail-tab", "inbox");
   const [done] = useLocalStorage("imail-done", false);
+  const [threadId, setThreadId] = useAtom(threadIdAtom);
 
   const {
     data: threads,
@@ -28,9 +32,10 @@ const useThreads = () => {
     threads,
     isFetching,
     refetch,
+    setThreadId,
+    threadId,
     accountId,
     account: accounts?.find((account) => account.id === accountId),
   };
 };
 
-export default useThreads;
