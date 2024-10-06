@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import axios from "axios";
 
 // Handle all the logic for the aurinko
-export const getAurinkoAuthUrl = async (
+export const getAurinkoAuthorizationUrl = async (
   serviceType: "Google" | "Office365",
 ) => {
   // Get the logged in user from clerk
@@ -12,28 +12,26 @@ export const getAurinkoAuthUrl = async (
   if (!userId) throw new Error("Unauthorized");
 
   // Construct the params
-
   const params = new URLSearchParams({
-    clientId: process.env.AURINKO_CLIENT_ID!,
+    clientId: process.env.AURINKO_CLIENT_ID as string,
     serviceType,
     scopes: "Mail.Read Mail.ReadWrite Mail.Send Mail.Drafts Mail.All",
     responseType: "code",
-    returnUrl: `${process.env.NEXTAUTH_URL}/api/aurinko/callback`,
+    returnUrl: `${process.env.NEXT_PUBLIC_URL}/api/aurinko/callback`,
   });
 
   return `https://api.aurinko.io/v1/auth/authorize?${params.toString()}`;
 };
 
-export const exchangeCodeForAccessToken = async (code: string) => {
-  // Exchange the code for an access token
+export const getAurinkoToken = async (code: string) => {
   try {
     const response = await axios.post(
-      "https://api.aurinko.io/v1/auth/token/${code}",
+      `https://api.aurinko.io/v1/auth/token/${code}`,
       {},
       {
         auth: {
-          username: process.env.AURINKO_CLIENT_ID!,
-          password: process.env.AURINKO_CLIENT_SECRET!,
+          username: process.env.AURINKO_CLIENT_ID as string,
+          password: process.env.AURINKO_CLIENT_SECRET as string,
         },
       },
     );
@@ -69,6 +67,30 @@ export const getAccountDetails = async (accessToken: string) => {
       console.error("Error fetching account details:", error.response?.data);
     } else {
       console.error("Unexpected error fetching account details:", error);
+    }
+    throw error;
+  }
+};
+
+export const getEmailDetails = async (accessToken: string, emailId: string) => {
+  try {
+    const response = await axios.get<EmailMessage>(
+      `https://api.aurinko.io/v1/email/messages/${emailId}`,
+      {
+        params: {
+          loadInlines: true,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Error fetching email details:", error.response?.data);
+    } else {
+      console.error("Unexpected error fetching email details:", error);
     }
     throw error;
   }
