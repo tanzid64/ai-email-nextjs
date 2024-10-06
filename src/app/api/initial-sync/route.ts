@@ -1,7 +1,7 @@
+import { Account } from "@/lib/account";
+import { syncEmailsToDatabase } from "@/lib/sync-to-db";
+import { db } from "@/server/db";
 import { NextRequest, NextResponse } from "next/server";
-import { Account } from "~/lib/account";
-import { syncEmailsToDatabase } from "~/lib/sync-to-db";
-import { db } from "~/server/db";
 
 export const POST = async (req: NextRequest) => {
   const { accountId, userId } = await req.json();

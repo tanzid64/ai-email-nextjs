@@ -1,12 +1,9 @@
-import pLimit from "p-limit";
-import { db } from "~/server/db";
-import { EmailAddress, EmailAttachment, EmailMessage } from "./types";
+import { db } from "@/server/db";
 import { Prisma } from "@prisma/client";
+import pLimit from "p-limit";
+import { EmailAddress, EmailAttachment, EmailMessage } from "./types";
 
-async function syncEmailsToDatabase(
-  emails: EmailMessage[],
-  accountId: string,
-) {
+async function syncEmailsToDatabase(emails: EmailMessage[], accountId: string) {
   const limit = pLimit(10);
   try {
     Promise.all(
